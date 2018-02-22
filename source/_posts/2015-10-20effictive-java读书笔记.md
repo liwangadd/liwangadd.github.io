@@ -1,7 +1,9 @@
+---
 title: effictive-java读书笔记
-date: 2015-10-20 15:50:22
 tags: JAVA
 categories: 读书笔记
+abbrlink: 636894a
+date: 2015-10-20 15:50:22
 ---
 # Effective Java一书笔记
 

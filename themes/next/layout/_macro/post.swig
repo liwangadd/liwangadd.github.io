@@ -91,6 +91,15 @@
             {% endif %}
           </span>
 
+          {%if post.updated and post.updated > post.date%}
+            <span class="post-updated">
+            &nbsp; | &nbsp; {{ __('post.updated') }}
+            <time itemprop="dateUpdated" datetime="{{ moment(post.updated).format() }}" content="{{ date(post.updated, config.date_format) }}">
+              {{ date(post.updated, config.date_format) }}
+            </time>
+            </span>
+          {% endif %}
+
           {% if post.categories and post.categories.length and theme.post_meta.categories %}
             <span class="post-category" >
             {% if theme.post_meta.created_at or theme.post_meta.updated_at %}
@@ -338,11 +347,18 @@
       </div>
     {% endif %}
 
+    <div>
+      {% if not is_index %}
+        {% include 'passage-end-tag.swig' %}
+      {% endif %}
+    </div>
+
+
     <footer class="post-footer">
       {% if post.tags and post.tags.length and not is_index %}
         <div class="post-tags">
           {% for tag in post.tags %}
-            <a href="{{ url_for(tag.path) }}" rel="tag"># {{ tag.name }}</a>
+            <a href="{{ url_for(tag.path) }}" rel="tag"><i class="fa fa-tag"></i> {{ tag.name }}</a>
           {% endfor %}
         </div>
       {% endif %}
