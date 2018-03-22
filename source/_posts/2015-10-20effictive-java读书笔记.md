@@ -1,6 +1,6 @@
 ---
 title: effictive-java读书笔记
-tags: JAVA
+tags: Java
 categories: 读书笔记
 abbrlink: 636894a
 date: 2015-10-20 15:50:22
