@@ -5,9 +5,9 @@
   
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://yoursite.com/"/>
-  <updated>2018-03-22T01:41:36.962Z</updated>
-  <id>http://yoursite.com/</id>
+  <link href="http://windylee.cn/"/>
+  <updated>2018-03-22T02:12:59.294Z</updated>
+  <id>http://windylee.cn/</id>
   
   <author>
     <name>windylee</name>
@@ -18,10 +18,10 @@
   
   <entry>
     <title>Python中的functools模块</title>
-    <link href="http://yoursite.com/posts/f6b0a560/"/>
-    <id>http://yoursite.com/posts/f6b0a560/</id>
+    <link href="http://windylee.cn/posts/f6b0a560/"/>
+    <id>http://windylee.cn/posts/f6b0a560/</id>
     <published>2018-03-22T01:22:20.000Z</published>
-    <updated>2018-03-22T01:41:36.962Z</updated>
+    <updated>2018-03-22T02:12:59.294Z</updated>
     
     <content type="html"><![CDATA[<h3 id="functools-partial-func-args-keywords"><a href="#functools-partial-func-args-keywords" class="headerlink" title="functools.partial(func[, *args][, **keywords])"></a><strong>functools.partial(func[, *args][, **keywords])</strong></h3><p>该函数通过包装手法，允许我们”重新定义”函数。返回用args和keywords填充了func指定位置参数后的函数，调用该函数只需传入原函数未填充的参数。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> partial</span><br><span class="line">basetwo = partial(int, base=<span class="number">2</span>)</span><br><span class="line">basetwo(<span class="string">'10010'</span>)</span><br></pre></td></tr></table></figure><p>basetwo(‘10010’)实际上等价于调用int(‘10010’, base=2)</p><h3 id="functools-singledispatch"><a href="#functools-singledispatch" class="headerlink" title="@functools.singledispatch"></a>@functools.singledispatch</h3><p>使用过面向对象语言的同学，肯定熟悉各种方法的重载。虽然Python不支持方法重载的，但是我们可以添加@functools.singledispatch注解来动态指定相应的方法所接收的参数类型。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> singledispatch</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestClass</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="meta">  @singledispatch</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">test_method</span><span class="params">(arg, verbose=False)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> verbose:</span><br><span class="line">      print(<span class="string">'Let me just say,'</span>, end=<span class="string">' '</span>)</span><br><span class="line">    print(arg)</span><br><span class="line"><span class="meta">  @test_method.register(int)</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">_</span><span class="params">(arg)</span>:</span></span><br><span class="line">    print(<span class="string">'Strength in numbers, eh?'</span>, end=<span class="string">' '</span>)</span><br><span class="line"><span class="meta">  @test_method.register(list)</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">_</span><span class="params">(arg)</span>:</span></span><br><span class="line">    print(<span class="string">'Enumerate this:'</span>)</span><br></pre></td></tr></table></figure><p>通过@test_method.register(int)和@test_method.register(list)指定当test_method的第一个参数为int或者list的时候，分别调用不同的方法来进行处理。</p><h3 id="functools-update-wrapper-wrapper-wrapped"><a href="#functools-update-wrapper-wrapper-wrapped" class="headerlink" title="functools.update_wrapper(**wrapper, wrapped)"></a><strong>functools.update_wrapper(**wrapper, wrapped)</strong></h3><p>默认partial对象没有<code>__name__</code>和<code>__doc__</code>，这种情况下，对于装饰器函数非常难以debug。使用该函数可以将被封装函数的这些属性复制到封装函数中。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_decorator</span><span class="params">(f)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kwds)</span>:</span></span><br><span class="line">    print(<span class="string">'print in wrapper'</span>)</span><br><span class="line">    <span class="keyword">return</span> f(*args, **kwds)</span><br><span class="line">  <span class="keyword">return</span> update_wrapper(wrapper, f)</span><br><span class="line"><span class="meta">@my_decorator</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">example</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">'print in example'</span>)</span><br></pre></td></tr></table></figure><h3 id="functools-wraps"><a href="#functools-wraps" class="headerlink" title="@functools.wraps"></a>@functools.wraps</h3><p>该注释内部调用了<code>functools.update_wrapper()</code>函数，简化编码复杂度。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> warps</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_decorator</span><span class="params">(f)</span>:</span></span><br><span class="line"><span class="meta">    @warps(f)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kwds)</span>:</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">'print in wrapper'</span></span><br><span class="line">        <span class="keyword">return</span> f(*args, **kwds)</span><br><span class="line">   <span class="keyword">return</span> wrapper</span><br><span class="line"><span class="meta">@my_decorator</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">example</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'print in example'</span></span><br></pre></td></tr></table></figure><a id="more"></a><h3 id="functools-lru-cache-maxsize-None-typed-False"><a href="#functools-lru-cache-maxsize-None-typed-False" class="headerlink" title="@functools.lru_cache(maxsize=None, typed=False)"></a>@functools.lru_cache(maxsize=None, typed=False)</h3><p>@lru_cache用于缓存函数返回的结果，对于重复的调用直接从缓存中获取返回值。如果maxsize设置为None，则缓存没有上界。如果typed设置为true，则对于不同的参数类型会区别缓存。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> lru_cache</span><br><span class="line"><span class="meta">@luc_cache(None)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    print(<span class="string">'calculating: %s + %s'</span> % (x, y))</span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line">print(add(<span class="number">1</span>, <span class="number">2</span>))</span><br><span class="line">print(add(<span class="number">1</span>, <span class="number">2</span>))</span><br><span class="line">print(add(<span class="number">2</span>, <span class="number">3</span>))</span><br></pre></td></tr></table></figure><p>输出结果：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">calculating: <span class="number">1</span> + <span class="number">2</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line">calculating: <span class="number">2</span> + <span class="number">3</span></span><br><span class="line"><span class="number">5</span></span><br></pre></td></tr></table></figure><h3 id="functools-total-ordering"><a href="#functools-total-ordering" class="headerlink" title="@functools.total_ordering"></a>@functools.total_ordering</h3><p>这是一个类装饰器，用于自动实现类的比较运算。若自定义类中实现了<code>__eq__</code>和<code>__lt__</code>、<code>__gt__</code>、<code>__ne__</code>、<code>__le__</code>、<code>__ge__</code>中的一个，带有@total_ordering装饰的类会自动实现剩下的函数 。</p><h4 id="functools-cmp-to-key-func"><a href="#functools-cmp-to-key-func" class="headerlink" title="functools.cmp_to_key(func)"></a><strong>functools.cmp_to_key(func)</strong></h4><p>该函数用于将旧式的比较函数转化为key(关键值)函数并应用于接受key function的工具类中(sorted(), min(), max(), heapq.nsamllest(), heapq.nlargest(), itertools,groupby())</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> cmp_to_key</span><br><span class="line">sorted(iterable, key=cmp_to_key(cmp_func))</span><br></pre></td></tr></table></figure><h3 id="functools-reduce-func-iterable-initializer"><a href="#functools-reduce-func-iterable-initializer" class="headerlink" title="functools.reduce(func, iterable, [, initializer])"></a><strong>functools.reduce(func, iterable, [, initializer])</strong></h3><p>与python2中的内建函数reduce等价</p>]]></content>
     
@@ -31,17 +31,19 @@
     
     </summary>
     
-      <category term="Python" scheme="http://yoursite.com/categories/Python/"/>
+      <category term="Python" scheme="http://windylee.cn/categories/Python/"/>
     
     
-      <category term="Python 标准库" scheme="http://yoursite.com/tags/Python-%E6%A0%87%E5%87%86%E5%BA%93/"/>
+      <category term="Python" scheme="http://windylee.cn/tags/Python/"/>
+    
+      <category term="标准库" scheme="http://windylee.cn/tags/%E6%A0%87%E5%87%86%E5%BA%93/"/>
     
   </entry>
   
   <entry>
     <title>Git简明教程</title>
-    <link href="http://yoursite.com/posts/6326f1e4/"/>
-    <id>http://yoursite.com/posts/6326f1e4/</id>
+    <link href="http://windylee.cn/posts/6326f1e4/"/>
+    <id>http://windylee.cn/posts/6326f1e4/</id>
     <published>2018-03-10T14:29:11.000Z</published>
     <updated>2018-03-10T14:32:23.577Z</updated>
     
@@ -53,17 +55,17 @@
     
     </summary>
     
-      <category term="Tools" scheme="http://yoursite.com/categories/Tools/"/>
+      <category term="Tools" scheme="http://windylee.cn/categories/Tools/"/>
     
     
-      <category term="Tools" scheme="http://yoursite.com/tags/Tools/"/>
+      <category term="Tools" scheme="http://windylee.cn/tags/Tools/"/>
     
   </entry>
   
   <entry>
     <title>Nginx入门教程</title>
-    <link href="http://yoursite.com/posts/750751bd/"/>
-    <id>http://yoursite.com/posts/750751bd/</id>
+    <link href="http://windylee.cn/posts/750751bd/"/>
+    <id>http://windylee.cn/posts/750751bd/</id>
     <published>2018-02-20T14:58:46.000Z</published>
     <updated>2018-02-21T16:28:25.430Z</updated>
     
@@ -75,17 +77,17 @@
     
     </summary>
     
-      <category term="Java Web" scheme="http://yoursite.com/categories/Java-Web/"/>
+      <category term="Java Web" scheme="http://windylee.cn/categories/Java-Web/"/>
     
     
-      <category term="nginx" scheme="http://yoursite.com/tags/nginx/"/>
+      <category term="nginx" scheme="http://windylee.cn/tags/nginx/"/>
     
   </entry>
   
   <entry>
     <title>Spring定时任务</title>
-    <link href="http://yoursite.com/posts/4016a806/"/>
-    <id>http://yoursite.com/posts/4016a806/</id>
+    <link href="http://windylee.cn/posts/4016a806/"/>
+    <id>http://windylee.cn/posts/4016a806/</id>
     <published>2018-02-20T14:53:46.000Z</published>
     <updated>2018-02-21T16:28:25.430Z</updated>
     
@@ -97,17 +99,17 @@
     
     </summary>
     
-      <category term="Java Web" scheme="http://yoursite.com/categories/Java-Web/"/>
+      <category term="Java Web" scheme="http://windylee.cn/categories/Java-Web/"/>
     
     
-      <category term="Spring" scheme="http://yoursite.com/tags/Spring/"/>
+      <category term="Spring" scheme="http://windylee.cn/tags/Spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring异步任务</title>
-    <link href="http://yoursite.com/posts/c0ceddf6/"/>
-    <id>http://yoursite.com/posts/c0ceddf6/</id>
+    <link href="http://windylee.cn/posts/c0ceddf6/"/>
+    <id>http://windylee.cn/posts/c0ceddf6/</id>
     <published>2018-02-20T14:51:49.000Z</published>
     <updated>2018-02-21T16:28:25.431Z</updated>
     
@@ -119,17 +121,17 @@
     
     </summary>
     
-      <category term="Java Web" scheme="http://yoursite.com/categories/Java-Web/"/>
+      <category term="Java Web" scheme="http://windylee.cn/categories/Java-Web/"/>
     
     
-      <category term="Spring" scheme="http://yoursite.com/tags/Spring/"/>
+      <category term="Spring" scheme="http://windylee.cn/tags/Spring/"/>
     
   </entry>
   
   <entry>
     <title>Spring拦截器</title>
-    <link href="http://yoursite.com/posts/2b6e765e/"/>
-    <id>http://yoursite.com/posts/2b6e765e/</id>
+    <link href="http://windylee.cn/posts/2b6e765e/"/>
+    <id>http://windylee.cn/posts/2b6e765e/</id>
     <published>2015-10-25T05:17:25.000Z</published>
     <updated>2018-02-21T16:28:25.428Z</updated>
     
@@ -141,17 +143,17 @@
     
     </summary>
     
-      <category term="Java Web" scheme="http://yoursite.com/categories/Java-Web/"/>
+      <category term="Java Web" scheme="http://windylee.cn/categories/Java-Web/"/>
     
     
-      <category term="Spring" scheme="http://yoursite.com/tags/Spring/"/>
+      <category term="Spring" scheme="http://windylee.cn/tags/Spring/"/>
     
   </entry>
   
   <entry>
     <title>Java8新的时间日期库</title>
-    <link href="http://yoursite.com/posts/b5a2dc36/"/>
-    <id>http://yoursite.com/posts/b5a2dc36/</id>
+    <link href="http://windylee.cn/posts/b5a2dc36/"/>
+    <id>http://windylee.cn/posts/b5a2dc36/</id>
     <published>2015-10-24T03:28:41.000Z</published>
     <updated>2018-02-21T16:28:25.429Z</updated>
     
@@ -163,17 +165,17 @@
     
     </summary>
     
-      <category term="Java Web" scheme="http://yoursite.com/categories/Java-Web/"/>
+      <category term="Java Web" scheme="http://windylee.cn/categories/Java-Web/"/>
     
     
-      <category term="Java" scheme="http://yoursite.com/tags/Java/"/>
+      <category term="Java" scheme="http://windylee.cn/tags/Java/"/>
     
   </entry>
   
   <entry>
     <title>effictive-java读书笔记</title>
-    <link href="http://yoursite.com/posts/636894a/"/>
-    <id>http://yoursite.com/posts/636894a/</id>
+    <link href="http://windylee.cn/posts/636894a/"/>
+    <id>http://windylee.cn/posts/636894a/</id>
     <published>2015-10-20T07:50:22.000Z</published>
     <updated>2018-03-22T01:26:08.134Z</updated>
     
@@ -185,17 +187,17 @@
     
     </summary>
     
-      <category term="读书笔记" scheme="http://yoursite.com/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+      <category term="读书笔记" scheme="http://windylee.cn/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
     
-      <category term="Java" scheme="http://yoursite.com/tags/Java/"/>
+      <category term="Java" scheme="http://windylee.cn/tags/Java/"/>
     
   </entry>
   
   <entry>
     <title>MongoDb索引</title>
-    <link href="http://yoursite.com/posts/c2f6f9e3/"/>
-    <id>http://yoursite.com/posts/c2f6f9e3/</id>
+    <link href="http://windylee.cn/posts/c2f6f9e3/"/>
+    <id>http://windylee.cn/posts/c2f6f9e3/</id>
     <published>2015-10-20T07:49:29.000Z</published>
     <updated>2018-02-21T16:28:25.427Z</updated>
     
@@ -207,17 +209,17 @@
     
     </summary>
     
-      <category term="MongoDb" scheme="http://yoursite.com/categories/MongoDb/"/>
+      <category term="MongoDb" scheme="http://windylee.cn/categories/MongoDb/"/>
     
     
-      <category term="Database" scheme="http://yoursite.com/tags/Database/"/>
+      <category term="Database" scheme="http://windylee.cn/tags/Database/"/>
     
   </entry>
   
   <entry>
     <title>MongoDb查询</title>
-    <link href="http://yoursite.com/posts/f3e67b24/"/>
-    <id>http://yoursite.com/posts/f3e67b24/</id>
+    <link href="http://windylee.cn/posts/f3e67b24/"/>
+    <id>http://windylee.cn/posts/f3e67b24/</id>
     <published>2015-10-18T11:30:51.000Z</published>
     <updated>2018-02-21T16:28:25.427Z</updated>
     
@@ -229,17 +231,17 @@
     
     </summary>
     
-      <category term="MongoDb" scheme="http://yoursite.com/categories/MongoDb/"/>
+      <category term="MongoDb" scheme="http://windylee.cn/categories/MongoDb/"/>
     
     
-      <category term="Database" scheme="http://yoursite.com/tags/Database/"/>
+      <category term="Database" scheme="http://windylee.cn/tags/Database/"/>
     
   </entry>
   
   <entry>
     <title>MongoDb创建，删除，更改</title>
-    <link href="http://yoursite.com/posts/9aa16efd/"/>
-    <id>http://yoursite.com/posts/9aa16efd/</id>
+    <link href="http://windylee.cn/posts/9aa16efd/"/>
+    <id>http://windylee.cn/posts/9aa16efd/</id>
     <published>2015-10-18T11:09:28.000Z</published>
     <updated>2018-02-21T16:28:25.426Z</updated>
     
@@ -251,17 +253,17 @@
     
     </summary>
     
-      <category term="MongoDb" scheme="http://yoursite.com/categories/MongoDb/"/>
+      <category term="MongoDb" scheme="http://windylee.cn/categories/MongoDb/"/>
     
     
-      <category term="Database" scheme="http://yoursite.com/tags/Database/"/>
+      <category term="Database" scheme="http://windylee.cn/tags/Database/"/>
     
   </entry>
   
   <entry>
     <title>markdown新手指南</title>
-    <link href="http://yoursite.com/posts/bc135409/"/>
-    <id>http://yoursite.com/posts/bc135409/</id>
+    <link href="http://windylee.cn/posts/bc135409/"/>
+    <id>http://windylee.cn/posts/bc135409/</id>
     <published>2015-09-21T00:58:04.000Z</published>
     <updated>2018-02-21T16:28:25.425Z</updated>
     
@@ -273,10 +275,10 @@
     
     </summary>
     
-      <category term="markdown" scheme="http://yoursite.com/categories/markdown/"/>
+      <category term="markdown" scheme="http://windylee.cn/categories/markdown/"/>
     
     
-      <category term="markdown" scheme="http://yoursite.com/tags/markdown/"/>
+      <category term="markdown" scheme="http://windylee.cn/tags/markdown/"/>
     
   </entry>
   
