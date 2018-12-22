@@ -22,7 +22,7 @@ categories: Java
 
 为了提高ThreadLocal效率，需要去掉锁机制。如果Thread维护一个自己的Map，该Map存储所有用到的本地副本，这样每个Thread只需要访问自己的Map，不存在写冲突，也就不需要锁了。
 
-![184951-13b6596868c2dac](http://7xs0vv.com1.z0.glb.clouddn.com/2184951-13b6596868c2dacd.png)
+![184951-13b6596868c2dac](http://windylee-blog.oss-cn-beijing.aliyuncs.com/2184951-13b6596868c2dacd.png)
 
 该方案虽然没有锁的问题，但是在每个线程内部都保存了该线程用到的本地副本。如果不删除这些引用，会导致这些副本无法被垃圾回收，造成内存泄露。
 
@@ -34,7 +34,7 @@ categories: Java
 
 ThreadLocalMap是ThreadLocal的静态内部类，对ThreadLocal进行的get、set操作最后都将委托给该类。同时每个Thread内部都有一个ThreadLocalMap变量，用于保存本线程用到的副本。它的结构如下：
 
-![018032116251](http://7xs0vv.com1.z0.glb.clouddn.com/20180321162514.png)
+![018032116251](http://windylee-blog.oss-cn-beijing.aliyuncs.com/20180321162514.png)
 
 可以看到ThreadLocalMap有一个常量和三个成员变量：
 

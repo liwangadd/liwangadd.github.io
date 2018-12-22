@@ -18,7 +18,7 @@ HDFS NameNode 的高可用整体架构如图 1 所示 (图片来源于参考文�
 
 ##### 图 1.HDFS NameNode 高可用整体架构
 
-![](https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-name-node/img001.png)
+![](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A801.png)
 
 从上图中，我们可以看出 NameNode 的高可用架构主要分为下面几个部分：
 
@@ -59,7 +59,7 @@ NameNode 实现主备切换的流程如图 2 所示，有以下几步：
 
 ##### 图 2.NameNode 的主备切换流程
 
-![img](https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-name-node/img002.png)
+![img](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A802.png)
 
 下面分别对 HealthMonitor、ActiveStandbyElector 和 ZKFailoverController 的实现细节进行分析：
 
@@ -149,7 +149,7 @@ ZKFailoverController 在创建 HealthMonitor 和 ActiveStandbyElector 的同时�
 
 ##### 图 3 .NameNode 的元数据存储目录结构
 
-![img](https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-name-node/img003.png)
+![img](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A803.png)
 
 NameNode 在执行 HDFS 客户端提交的创建文件或者移动文件这样的写操作的时候，会首先把这些操作记录在 EditLog 文件之中，然后再更新内存中的文件系统镜像。内存中的文件系统镜像用于 NameNode 向客户端提供读服务，而 EditLog 仅仅只是在数据恢复的时候起作用。记录在 EditLog 之中的每一个操作又称为一个事务，每个事务有一个整数形式的事务 id 作为编号。EditLog 会被切割为很多段，每一段称为一个 Segment。正在写入的 EditLog Segment 处于 in-progress 状态，其文件名形如 edits_inprogress_${start_txid}，其中${start_txid} 表示这个 segment 的起始事务 id，例如上图中的 edits_inprogress_0000000000000000020。而已经写入完成的 EditLog Segment 处于 finalized 状态，其文件名形如 edits_${start_txid}-${end_txid}，其中${start_txid} 表示这个 segment 的起始事务 id，${end_txid} 表示这个 segment 的结束事务 id，例如上图中的 edits_0000000000000000001-0000000000000000019。
 
@@ -163,7 +163,7 @@ NameNode 会定期对内存中的文件系统镜像进行 checkpoint 操作，�
 
 ##### 图 4 . 基于 QJM 的共享存储系统的内部实现架构图
 
-![img](https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-name-node/img004.png)
+![img](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A804.png)
 
 FSEditLog：这个类封装了对 EditLog 的所有操作，是 NameNode 对 EditLog 的所有操作的入口。
 
@@ -189,7 +189,7 @@ Active NameNode 和 StandbyNameNode 使用 JouranlNode 集群来进行数据同�
 
 ##### 图 5 . 基于 QJM 的共享存储的数据同步机制
 
-![img](https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-name-node/img005.png)
+![img](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A805.png)
 
 **Active NameNode 提交 EditLog 到 JournalNode 集群**
 
@@ -213,7 +213,7 @@ Active NameNode 和 StandbyNameNode 使用 JouranlNode 集群来进行数据同�
 
 ##### 图 6.Active NameNode 和 JournalNode 集群的交互流程图
 
-![img](https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-name-node/img006.png)
+![img](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A806.png)
 
 **生成一个新的 Epoch**
 
@@ -254,7 +254,7 @@ NameNode 接下来向 JournalNode 集群发送 prepareRecovery RPC 请求，请�
 
 ##### 图 7.JournalNode 集群写入的事务 id 情况
 
-![img](https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-name-node/img007.png)
+![img](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A807.png)
 
 - 如果随后的 Active NameNode 进行数据恢复时在 prepareRecovery 阶段收到了 JN2 的回复，那么肯定会以 JN2 对应的 EditLog Segment 为基准来进行数据恢复，这样最后在多数 JournalNode 上的 EditLog Segment 会恢复到事务 153。从恢复的结果来看，实际上可以认为前面宕机的 Active NameNode 对事务 id 为 151、152 和 153 的这 3 个事务的写入成功了。但是如果从 NameNode 自身的角度来看，这显然就发生了数据不一致的情况。
 - 如果随后的 Active NameNode 进行数据恢复时在 prepareRecovery 阶段没有收到 JN2 的回复，那么肯定会以 JN1 对应的 EditLog Segment 为基准来进行数据恢复，这样最后在多数 JournalNode 上的 EditLog Segment 会恢复到事务 150。在这种情况下，如果从 NameNode 自身的角度来看的话，数据就是一致的了。
