@@ -1,6 +1,6 @@
 ---
 title: Centos7安装MySQL
-tags: [Linux,Tools]
+tags: [Linux, MySQL, Database]
 categories: Linux
 abbrlink: df149a46
 date: 2018-06-25 10:51:26

@@ -3,7 +3,7 @@ title: Hadoop NameNode 高可用 (High Availability) 实现解析.md
 tags:
   - BigData
   - Hadoop
-categories: BigData
+categories: 大数据
 abbrlink: 523baf91
 date: 2018-11-11 19:29:12
 ---

@@ -1,6 +1,8 @@
 ---
 title: Python中的itertools模块
-tags: Python
+tags: 
+- Python
+- 标准库
 categories: Python
 abbrlink: 4f4399bb
 date: 2018-04-16 09:45:12

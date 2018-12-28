@@ -2,8 +2,10 @@
 title: ThreadLocal深度解析
 abbrlink: cadd278f
 date: 2018-03-22 10:20:26
-tags: Java
-categories: Java
+tags: 
+- Java
+- 标准库
+categories: 源码阅读
 ---
 ### ThreadLocal解决什么问题
 
