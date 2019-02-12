@@ -16,7 +16,7 @@ date: 2018-11-11 19:29:12
 
 HDFS NameNode 的高可用整体架构如图 1 所示 (图片来源于参考文献 [1])：
 
-##### 图 1.HDFS NameNode 高可用整体架构
+**图 1.HDFS NameNode 高可用整体架构**
 
 ![](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A801.png)
 
@@ -57,7 +57,7 @@ NameNode 实现主备切换的流程如图 2 所示，有以下几步：
 5. ActiveStandbyElector 在主备选举完成后，会回调 ZKFailoverController 的相应方法来通知当前的 NameNode 成为主 NameNode 或备 NameNode。
 6. ZKFailoverController 调用对应 NameNode 的 HAServiceProtocol RPC 接口的方法将 NameNode 转换为 Active 状态或 Standby 状态。
 
-##### 图 2.NameNode 的主备切换流程
+**图 2.NameNode 的主备切换流程**
 
 ![img](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A802.png)
 
@@ -147,7 +147,7 @@ ZKFailoverController 在创建 HealthMonitor 和 ActiveStandbyElector 的同时�
 
 一个典型的 NameNode 的元数据存储目录结构如图 3 所示 (图片来源于参考文献 [4])，这里主要关注其中的 EditLog 文件和 FSImage 文件：
 
-##### 图 3 .NameNode 的元数据存储目录结构
+**图 3 .NameNode 的元数据存储目录结构**
 
 ![img](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A803.png)
 
@@ -161,7 +161,7 @@ NameNode 会定期对内存中的文件系统镜像进行 checkpoint 操作，�
 
 基于 QJM 的共享存储系统的内部实现架构图如图 4 所示，主要包含下面几个主要的组件：
 
-##### 图 4 . 基于 QJM 的共享存储系统的内部实现架构图
+**图 4 . 基于 QJM 的共享存储系统的内部实现架构图**
 
 ![img](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A804.png)
 
@@ -187,7 +187,7 @@ JournalNodeHttpServer：运行在 JournalNode 节点进程中的 Http 服务，�
 
 Active NameNode 和 StandbyNameNode 使用 JouranlNode 集群来进行数据同步的过程如图 5 所示，Active NameNode 首先把 EditLog 提交到 JournalNode 集群，然后 Standby NameNode 再从 JournalNode 集群定时同步 EditLog：
 
-##### 图 5 . 基于 QJM 的共享存储的数据同步机制
+**图 5 . 基于 QJM 的共享存储的数据同步机制**
 
 ![img](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A805.png)
 
@@ -211,7 +211,7 @@ Active NameNode 和 StandbyNameNode 使用 JouranlNode 集群来进行数据同�
 
 补齐落后的 EditLog 的过程复用了前面描述的 Standby NameNode 从 JournalNode 集群同步 EditLog 的逻辑和代码，最终调用 EditLogTailer 类的 doTailEdits 方法来完成 EditLog 的补齐。使 JournalNode 集群上的 EditLog 达成一致的过程是一致性算法 Paxos 的典型应用场景，QJM 对这部分的处理可以看做是 Single Instance Paxos(参见参考文献 [3]) 算法的一个实现，在达成一致的过程中，Active NameNode 和 JournalNode 集群之间的交互流程如图 6 所示，具体描述如下：
 
-##### 图 6.Active NameNode 和 JournalNode 集群的交互流程图
+**图 6.Active NameNode 和 JournalNode 集群的交互流程图**
 
 ![img](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A806.png)
 
@@ -252,7 +252,7 @@ NameNode 接下来向 JournalNode 集群发送 prepareRecovery RPC 请求，请�
 
 假设有 3 个 JournalNode：JN1、JN2 和 JN3，Active NameNode 发送了事务 id 为 151、152 和 153 的 3 个事务到 JournalNode 集群，这 3 个事务成功地写入了 JN2，但是在还没能写入 JN1 和 JN3 之前，Active NameNode 就宕机了。同时，JN3 在整个写入的过程中延迟较大，落后于 JN1 和 JN2。最终成功写入 JN1 的事务 id 为 150，成功写入 JN2 的事务 id 为 153，而写入到 JN3 的事务 id 仅为 125，如图 7 所示 (图片来源于参考文献 [2])。按照前面描述的只有成功地写入了大多数的 JournalNode 才认为写入成功的原则，显然事务 id 为 151、152 和 153 的这 3 个事务只能算作写入失败。在进行数据恢复的过程中，会发生下面两种情况：
 
-##### 图 7.JournalNode 集群写入的事务 id 情况
+**图 7.JournalNode 集群写入的事务 id 情况**
 
 ![img](http://windylee-blog.oss-cn-beijing.aliyuncs.com/Hadoop%20NameNode%E9%AB%98%E5%8F%AF%E7%94%A807.png)
 
