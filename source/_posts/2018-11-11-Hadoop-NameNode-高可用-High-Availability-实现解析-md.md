@@ -1,7 +1,7 @@
 ---
 title: Hadoop NameNode 高可用 (High Availability) 实现解析.md
 tags:
-  - BigData
+  - 分布式存储
   - Hadoop
 categories: 大数据
 abbrlink: 523baf91
